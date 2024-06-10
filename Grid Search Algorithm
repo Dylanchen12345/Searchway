@@ -1,0 +1,35 @@
+#Grid Search Algorithm
+using UnityEngine;
+
+public class GridSearch : MonoBehaviour
+{
+    public float gridSize = 10.0f;
+    public float searchSpeed = 5.0f;
+    private Vector3 targetPosition;
+    private Vector3 startPosition;
+    private int direction = 1;
+
+    void Start()
+    {
+        startPosition = transform.position;
+        targetPosition = startPosition;
+    }
+
+    void Update()
+    {
+        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
+        {
+            if (direction == 1)
+                targetPosition += new Vector3(gridSize, 0, 0);
+            else
+                targetPosition += new Vector3(0, 0, gridSize);
+
+            if (Vector3.Distance(targetPosition, startPosition) > 50.0f)
+            {
+                direction = (direction + 1) % 2;
+                startPosition = targetPosition;
+            }
+        }
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, searchSpeed * Time.deltaTime);
+    }
+}
