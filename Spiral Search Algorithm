@@ -1,0 +1,22 @@
+#Basic Spiral Search Algorithm
+using UnityEngine;
+
+public class SpiralSearch : MonoBehaviour
+{
+    public float spiralSpeed = 1.0f;
+    private float angle = 0;
+    private Vector3 startPosition;
+
+    void Start()
+    {
+        startPosition = transform.position;
+    }
+
+    void Update()
+    {
+        angle += spiralSpeed * Time.deltaTime;
+        float x = Mathf.Cos(angle) * angle;
+        float z = Mathf.Sin(angle) * angle;
+        transform.position = new Vector3(startPosition.x + x, transform.position.y, startPosition.z + z);
+    }
+}
