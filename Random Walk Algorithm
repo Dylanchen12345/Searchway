@@ -1,0 +1,27 @@
+#Random Walk Algorithm
+using UnityEngine;
+
+public class RandomWalk : MonoBehaviour
+{
+    public float walkSpeed = 3.0f;
+    private Vector3 targetPosition;
+
+    void Start()
+    {
+        SetRandomTarget();
+    }
+
+    void Update()
+    {
+        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
+        {
+            SetRandomTarget();
+        }
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, walkSpeed * Time.deltaTime);
+    }
+
+    void SetRandomTarget()
+    {
+        targetPosition = new Vector3(Random.Range(-50, 50), transform.position.y, Random.Range(-50, 50));
+    }
+}
