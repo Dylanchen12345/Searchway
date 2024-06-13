@@ -1,0 +1,94 @@
+import numpy as np
+from scipy import stats
+import matplotlib.pyplot as plt
+
+# 实验数据
+spiral_success = [80, 82, 78, 79, 81]
+grid_success = [75, 77, 74, 76, 76]
+hybrid_success = [85, 87, 84, 86, 86]
+
+spiral_time = [15, 16, 14, 15, 15]
+grid_time = [18, 19, 17, 18, 18]
+hybrid_time = [12, 13, 11, 12, 12]
+
+
+# 计算均值和标准差
+def calculate_stats(data):
+    mean = np.mean(data)
+    std_dev = np.std(data, ddof=1)
+    return mean, std_dev
+
+
+# 打印统计信息
+def print_stats(name, success, time):
+    success_mean, success_std = calculate_stats(success)
+    time_mean, time_std = calculate_stats(time)
+    print(f"{name} - 成功搜救率: {success_mean:.2f}% (±{success_std:.2f})")
+    print(f"{name} - 搜索时间: {time_mean:.2f}分钟 (±{time_std:.2f})")
+
+
+print_stats("螺旋搜索法", spiral_success, spiral_time)
+print_stats("网格搜索法", grid_success, grid_time)
+print_stats("混合搜索法", hybrid_success, hybrid_time)
+
+
+# 进行t检验
+def t_test(group1, group2):
+    t_stat, p_value = stats.ttest_ind(group1, group2, equal_var=False)
+    return p_value
+
+
+# 成功搜救率的t检验
+p_value_success_spiral_grid = t_test(spiral_success, grid_success)
+p_value_success_spiral_hybrid = t_test(spiral_success, hybrid_success)
+p_value_success_grid_hybrid = t_test(grid_success, hybrid_success)
+
+# 搜索时间的t检验
+p_value_time_spiral_grid = t_test(spiral_time, grid_time)
+p_value_time_spiral_hybrid = t_test(spiral_time, hybrid_time)
+p_value_time_grid_hybrid = t_test(grid_time, hybrid_time)
+
+
+# 打印P值
+def print_p_values(test_name, p_value):
+    print(f"{test_name} 的P值: {p_value:.5f}")
+
+
+print_p_values("螺旋搜索法 vs 网格搜索法 - 成功搜救率", p_value_success_spiral_grid)
+print_p_values("螺旋搜索法 vs 混合搜索法 - 成功搜救率", p_value_success_spiral_hybrid)
+print_p_values("网格搜索法 vs 混合搜索法 - 成功搜救率", p_value_success_grid_hybrid)
+
+print_p_values("螺旋搜索法 vs 网格搜索法 - 搜索时间", p_value_time_spiral_grid)
+print_p_values("螺旋搜索法 vs 混合搜索法 - 搜索时间", p_value_time_spiral_hybrid)
+print_p_values("网格搜索法 vs 混合搜索法 - 搜索时间", p_value_time_grid_hybrid)
+
+
+# 可视化
+def plot_data():
+    labels = ['螺旋搜索法', '网格搜索法', '混合搜索法']
+    success_means = [np.mean(spiral_success), np.mean(grid_success), np.mean(hybrid_success)]
+    time_means = [np.mean(spiral_time), np.mean(grid_time), np.mean(hybrid_time)]
+
+    x = np.arange(len(labels))
+    width = 0.35
+
+    fig, ax1 = plt.subplots()
+
+    ax2 = ax1.twinx()
+    ax1.bar(x - width / 2, success_means, width, label='成功搜救率', color='g')
+    ax2.bar(x + width / 2, time_means, width, label='搜索时间', color='b')
+
+    ax1.set_xlabel('搜索方法')
+    ax1.set_ylabel('成功搜救率 (%)', color='g')
+    ax2.set_ylabel('搜索时间 (分钟)', color='b')
+
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(labels)
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+
+    plt.title('搜索方法性能对比')
+    plt.show()
+
+
+plot_data()
